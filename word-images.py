@@ -55,16 +55,16 @@ def main():
  text = "Smoking Mothers May Alter the DNA of Their Children."
  parser = Parser()
  tree = parser.parse(text)
- print tree
+ print "Parse Tree:\n"+str(tree)+"\n"
  phrasesTree = extractTaggedPhrases(tree, 'NP')
- print phrasesTree
+ print "Extracted Phrases:\n"+str(phrasesTree)+"\n"
  phrases = []
  for phrase in phrasesTree:
   phrases.append(" ".join(phrase.leaves()))
 
  imagesDict = buildImagesDict(phrases)
  for phrase, images in imagesDict.iteritems():
-  print phrase
+  print phrase+":"
   print "\n".join([image for image in images])
   print
 
