@@ -4,20 +4,27 @@ import urllib2
 import simplejson
 from collections import OrderedDict
 
-RETRIEVE_IMAGES = False
+# This flag simply toggles whether to go out and do the Google image search or not
+# It's False now so as to allow for testing of NLP stuff first
+RETRIEVE_IMAGES = True
 
-def extractPhrases(myTree, phrase):
-    myPhrases = []
-    if (myTree.node == phrase):
-        myPhrases.append( myTree.copy(True) )
-    for child in myTree:
-        if (type(child) is Tree):
-            list_of_phrases = extractPhrases(child, phrase)
-            if (len(list_of_phrases) > 0):
-                myPhrases.extend(list_of_phrases)
-    return myPhrases
+# This function came from http://www.monlp.com/2012/01/20/extracting-noun-phrases-from-parsed-trees/
+# I modified it a bit for readability
+# I'm just using it to extract the noun phrases from the parse tree
+def extractTaggedPhrases(tree, tag):
+ phrases = []
+ if (tree.node == tag):
+  phrases.append( tree.copy())
+ for child in tree:
+  if (type(child) is Tree):
+   listOfPhrases = extractTaggedPhrases(child, tag)
+   if (len(listOfPhrases) > 0):
+    phrases.extend(listOfPhrases)
+ return phrases
 
+# This function takes in a search term and returns four Google image URLs for it
 def buildImageURLs(searchTerm):
+# Just return an empty array if we don't need to bother retrieving images. This insures code that depends on this function continues to work.
  if not RETRIEVE_IMAGES:
   return []
 
@@ -34,6 +41,7 @@ def buildImageURLs(searchTerm):
 
  return urls
 
+# This function takes in an array of phrases and calls buildImageURLs on each one, returning the results in a OrderedDict with the phrase as the key
 def buildImagesDict(phrases):
  images = OrderedDict()
 
@@ -42,12 +50,13 @@ def buildImagesDict(phrases):
 
  return images
 
+# I've stuffed everything else in here for the time being
 def main():
- text = "The circuit design could increase efficiency by 50%."
+ text = "Smoking Mothers May Alter the DNA of Their Children."
  parser = Parser()
  tree = parser.parse(text)
  print tree
- phrasesTree = extractPhrases(tree, 'NP')
+ phrasesTree = extractTaggedPhrases(tree, 'NP')
  print phrasesTree
  phrases = []
  for phrase in phrasesTree:
@@ -59,4 +68,5 @@ def main():
   print "\n".join([image for image in images])
   print
 
-main()
+if __name__ == "__main__":
+ main()
