@@ -11,13 +11,14 @@ import urllib2
 # NOTE: To install these on Linux or OS X, make sure
 # that you have Pip (https://pip.pypa.io/en/latest/installing.html)
 # and then try "sudo pip install --upgrade nltk"
-import nltk # 2.0.4
+import nltk  # 2.0.4
+
 
 class TextImager(object):
     """Class to convert text to a series of relevant images."""
 
     # Constants
-    RETRIEVE = True # Retrieve images from Google?
+    RETRIEVE = True  # Retrieve images from Google?
     SEARCH_PRE = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q="
 
     @staticmethod
@@ -33,7 +34,7 @@ class TextImager(object):
         """Retrieve the most relevant image for the given keywords.
 
         Args:
-            words: (listof(word)) List of words as strings 
+            words: (listof(word)) List of words as strings
 
         Returns:
             Image URL as a string
@@ -51,11 +52,11 @@ class TextImager(object):
         # Send it and parse the JSON response
         response = urllib2.urlopen(this.SEARCH_PRE + query)
         json = simplejson.load(response)
-        
+
         # Use our top image, if we have one
         try:
             return json["responseData"]["results"][0]["unescapedUrl"]
-        except: # Use our default image
+        except:  # Use our default image
             return retURL
 
     def getPhrases(this, text):
@@ -68,7 +69,7 @@ class TextImager(object):
             List of phrases as word (string) lists
         """
         # Use our parser to label noun phrases (NP)
-        words = nltk.word_tokenize(text.lower()) # Parsers often use case!
+        words = nltk.word_tokenize(text.lower())  # Parsers often use case!
         tagged = nltk.pos_tag(words)
         tree = this.parser.parse(tagged)
 
@@ -81,7 +82,7 @@ class TextImager(object):
                 retList.append([x[0] for x in branch.leaves()])
 
         return retList
-    
+
 if __name__ == "__main__":
 
     # Check for required input: prog + text
